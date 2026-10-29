@@ -1,0 +1,62 @@
+# =========================
+# Go
+# =========================
+
+# Ejecutables compilados
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Archivos de cobertura
+coverage.out
+coverage.html
+
+# Directorios de compilación
+bin/
+dist/
+
+# Archivos temporales
+tmp/
+*.log
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Configuración local
+config.local.*
+secrets.*
+
+# =========================
+# Svelte / Node.js
+# =========================
+
+node_modules/
+.svelte-kit/
+build/
+.output/
+.vercel/
+.netlify/
+
+# =========================
+# Editores
+# =========================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# =========================
+# Archivos temporales
+# =========================
+
+*.tmp
+*.bak
