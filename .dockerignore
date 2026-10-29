@@ -1,0 +1,33 @@
+# Git
+.git
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Binaries and build artifacts
+bin/
+tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Environment and sensitive data
+.env*
+!.env.example
+
+# IDEs
+.idea/
+.vscode/
+
+# Documentation and assets not needed at runtime
+docs/
+docker/
+README.md
+Makefile
+

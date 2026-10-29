@@ -1,0 +1,104 @@
+services:
+  # ========================================================
+  # 1. API Go (ClientHub Backend)
+  # ========================================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: clienthub_api
+    ports:
+      - "${PORT:-8080}:8080"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - PORT=${PORT:-8080}
+      - ENVIRONMENT=${ENVIRONMENT:-dev}
+      - VERSION=${VERSION:-4.1}
+      - DATABASE=${DATABASE:-postgres}
+      # Por defecto se conecta a la instancia local de postgres, pero se puede sobrescribir en .env
+      - DSN=${DSN:-host=postgres user=postgres password=postgres dbname=clienthub port=5432 sslmode=disable}
+      - JWT_SECRET=${JWT_SECRET:-ZzAwgc2Un3zGljVaCr132Xlz7lOAHyuwPy+IA1c6qTk=}
+      - FLOW_API_URL=${FLOW_API_URL:-https://sandbox.flow.cl/api}
+      # Configuración de almacenamiento B2 (Backblaze)
+      - B2_APPLICATION_KEY=${B2_APPLICATION_KEY:-}
+      - B2_BUCKET=${B2_BUCKET:-}
+      - B2_ENDPOINT=${B2_ENDPOINT:-}
+      - B2_KEY_ID=${B2_KEY_ID:-}
+      - B2_PUBLIC_URL=${B2_PUBLIC_URL:-}
+      - B2_REGION=${B2_REGION:-}
+      - B2_S3_PUBLIC_URL=${B2_S3_PUBLIC_URL:-}
+      # Email & SMTP
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM=${SMTP_FROM:-}
+      - API_KEY_RESEND=${API_KEY_RESEND:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - clienthub_net
+
+  # ========================================================
+  # 2. Base de Datos PostgreSQL
+  # ========================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: clienthub_postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-clienthub}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-clienthub}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - clienthub_net
+
+  # ========================================================
+  # 3. Administrador de BD (pgAdmin 4) - Opcional
+  #    Ejecutar con: docker compose --profile tools up -d
+  # ========================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: clienthub_pgadmin
+    profiles:
+      - tools
+      - all
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@clienthub.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - clienthub_net
+
+volumes:
+  postgres_data:
+    name: clienthub_postgres_data
+  pgadmin_data:
+    name: clienthub_pgadmin_data
+
+networks:
+  clienthub_net:
+    name: clienthub_network
+    driver: bridge
+
