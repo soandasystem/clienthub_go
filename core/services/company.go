@@ -31,6 +31,10 @@ func NewCompanyService(cfg config.Config, repo ports.CompanyRepository) ports.Co
 // Create roles
 func (p *companyService) Create(ctx context.Context, company models.CreateCompanyReq) (string, error) {
 
+	if company == (models.CreateCompanyReq{}) {
+		return "", errors.New("company no puede estar vacío")
+	}
+
 	now := time.Now().UTC()
 	company.CreatedDate = now
 	company.UpdatedDate = now

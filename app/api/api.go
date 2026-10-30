@@ -36,6 +36,7 @@ type svs struct {
 	users          ports.UsersService
 	schemaRegistry ports.SchemaRegistryService
 	upload         ports.UploadService
+	visit          ports.VisitService
 }
 
 // New creates a new API
@@ -46,6 +47,7 @@ func New(ctx context.Context, cfg config.Config) (a api) {
 	var rolesRepo ports.RolesRepository
 	var usersRepo ports.UsersRepository
 	var schemaRegistryRepo ports.SchemaRegistryRepository
+	var visitRepo ports.VisitRepository
 
 	//abre la base de datos
 	db, err := infrastructure.ConnectPostgresOrm(ctx, a.config.DSN)
@@ -57,11 +59,13 @@ func New(ctx context.Context, cfg config.Config) (a api) {
 	rolesRepo = postgres.NewRolesRepository(ctx, db)
 	usersRepo = postgres.NewUsersRepository(ctx, db)
 	schemaRegistryRepo = postgres.NewSchemaRegistryRepository(ctx, db)
+	visitRepo = postgres.NewVisitService(ctx, db)
 
 	a.services.company = services.NewCompanyService(a.config, companyRepo)
 	a.services.roles = services.NewRolesService(a.config, rolesRepo)
 	a.services.users = services.NewUsersService(a.config, usersRepo)
 	a.services.schemaRegistry = services.NewSchemaRegistryService(a.config, schemaRegistryRepo)
+	a.services.visitRegistry = services.NewVisitService(a.config, visitRepo)
 
 	// Inicializar B2 Storage y Upload Service
 	var b2Storage ports.UploadStorage
@@ -132,6 +136,7 @@ func (a *api) Run(ctx context.Context, cancel context.CancelFunc) func() error {
 		handlers.SetRolesRoutes(ctx, a.config, router, a.services.roles)
 		handlers.SetUsersRoutes(ctx, a.config, router, a.services.users)
 		handlers.SetSchemaRegistryRoutes(ctx, a.config, router, a.services.schemaRegistry)
+		handlers.SetVisitRoutes(ctx, a.config, router, a.services.visit)
 
 		if a.services.upload != nil {
 			handlers.SetUploadRoutes(ctx, a.config, router, a.services.upload)
