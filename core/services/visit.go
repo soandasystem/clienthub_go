@@ -53,7 +53,7 @@ func (p *visitService) GetAll(ctx context.Context, filter map[string]interface{}
 		}, nil
 	}
 
-	response, ok := result[0].(models.Visit)
+	response, ok := result[0].(models.VisitListResponse)
 	if !ok {
 		return nil, fmt.Errorf("tipo de respuesta inesperado del repositorio")
 	}

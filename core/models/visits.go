@@ -58,6 +58,11 @@ func (VisitDetail) TableName() string {
 	return "salesvisit.visit_details"
 }
 
+type VisitDetailListResponse struct {
+	Items      []VisitDetail `json:"items"`
+	TotalCount int64         `json:"totalCount"`
+}
+
 type VisitFollowup struct {
 	ID           int64      `gorm:"primaryKey;autoIncrement" json:"id"`
 	VisitID      int64      `gorm:"not null" json:"visit_id"`
@@ -75,6 +80,11 @@ func (VisitFollowup) TableName() string {
 	return "salesvisit.visit_followups"
 }
 
+type VisitFollowuptListResponse struct {
+	Items      []VisitFollowup `json:"items"`
+	TotalCount int64           `json:"totalCount"`
+}
+
 type VisitProduct struct {
 	ID                  int64     `gorm:"primaryKey;autoIncrement" json:"id"`
 	VisitID             int64     `gorm:"not null" json:"visit_id"`
@@ -88,8 +98,12 @@ func (VisitProduct) TableName() string {
 	return "salesvisit.visit_products"
 }
 
-//Sales
+type VisitProductListResponse struct {
+	Items      []VisitProduct `json:"items"`
+	TotalCount int64          `json:"totalCount"`
+}
 
+// Sales
 type SellerSupervisor struct {
 	ID           int64      `gorm:"primaryKey;autoIncrement" json:"id"`
 	SupervisorID int64      `gorm:"not null" json:"supervisor_id"`
@@ -100,6 +114,11 @@ type SellerSupervisor struct {
 
 func (SellerSupervisor) TableName() string {
 	return "salesvisit.seller_supervisors"
+}
+
+type SellerSupervisorListResponse struct {
+	Items      []SellerSupervisor `json:"items"`
+	TotalCount int64              `json:"totalCount"`
 }
 
 type SalesOrder struct {
@@ -150,8 +169,12 @@ func (SalesOrderDetail) TableName() string {
 	return "salesvisit.sales_order_details"
 }
 
-//Quotes
+type SalesOrderListResponse struct {
+	Items      []SalesOrder `json:"items"`
+	TotalCount int64        `json:"totalCount"`
+}
 
+// Quotes
 type Quote struct {
 	ID            int64           `gorm:"primaryKey;autoIncrement" json:"id"`
 	QuoteNumber   string          `gorm:"type:varchar(50);not null;unique" json:"quote_number"`
@@ -200,8 +223,12 @@ func (QuoteDetail) TableName() string {
 	return "salesvisit.quote_details"
 }
 
-//clients
+type QuoteListResponse struct {
+	Items      []Quote `json:"items"`
+	TotalCount int64   `json:"totalCount"`
+}
 
+// clients
 type Prospect struct {
 	ID                     int64     `gorm:"primaryKey;autoIncrement" json:"id"`
 	CompanyName            string    `gorm:"type:varchar(200);not null" json:"company_name"`
@@ -223,6 +250,11 @@ func (Prospect) TableName() string {
 	return "salesvisit.prospects"
 }
 
+type ProspectListResponse struct {
+	Items      []Prospect `json:"items"`
+	TotalCount int64      `json:"totalCount"`
+}
+
 // registros externos
 type ExternalRecord struct {
 	ID              int64      `gorm:"primaryKey;autoIncrement" json:"id"`
@@ -236,4 +268,9 @@ type ExternalRecord struct {
 
 func (ExternalRecord) TableName() string {
 	return "salesvisit.external_records"
+}
+
+type ExternalRecordListResponse struct {
+	Items      []ExternalRecord `json:"items"`
+	TotalCount int64            `json:"totalCount"`
 }
