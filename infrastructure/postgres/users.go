@@ -139,7 +139,7 @@ func (s *usersRepository) Get(ctx context.Context, filter map[string]interface{}
 			query = query.Where(fmt.Sprintf("%s = ?", key), value)
 		}
 	}
-
+	
 	// 2. Consulta para contar el total (sin paginación)
 	if err := query.Count(&totalCount).Error; err != nil {
 		return nil, err

@@ -10,6 +10,7 @@ type Users struct {
 	Email        string    `json:"email"`
 	RolesId      int64     `json:"roles_id"`
 	Active       bool      `json:"active"`
+	CompanyId    int64     `json:"company_id"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 }
 
@@ -22,6 +23,7 @@ type UsersResp struct {
 	Email        string    `json:"email"`
 	RolesId      int64     `json:"roles_id"`
 	Active       bool      `json:"active"`
+	CompanyId    int64     `json:"company_id"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 }
 
@@ -38,6 +40,7 @@ type CreateUsersReq struct {
 	Email        string    `json:"email"`
 	RolesId      int64     `json:"roles_id"`
 	Active       bool      `json:"active"`
+	CompanyId    int64     `json:"company_id"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 }
 
@@ -53,6 +56,7 @@ type UpdateUsersReq struct {
 	Email        *string    `json:"email"`
 	RolesId      *int64     `json:"roles_id"`
 	Active       *bool      `json:"active"`
+	CompanyId    *int64     `json:"company_id"`
 	CreatedAt    *time.Time `gorm:"autoCreateTime"`
 }
 
@@ -69,6 +73,7 @@ type UsersInf struct {
 	RolesId      int64       `json:"roles_id"`
 	Rol          RolesReport `json:"rol" gorm:"foreignKey:RolesId;references:ID"`
 	Active       bool        `json:"active"`
+	CompanyId    int64       `json:"company_id"`
 	CreatedAt    time.Time   `gorm:"autoCreateTime"`
 }
 
@@ -89,6 +94,7 @@ type UsersReport struct {
 	Email        string    `json:"email"`
 	RolesId      int64     `json:"roles_id"`
 	Active       bool      `json:"active"`
+	CompanyId    int64     `json:"company_id"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 }
 
