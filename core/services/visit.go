@@ -61,6 +61,30 @@ func (p *visitService) GetAll(ctx context.Context, filter map[string]interface{}
 	return &response, nil
 }
 
+func (p *visitService) GetInforme(ctx context.Context, filter map[string]interface{}) (*models.VisitSveltResponse, error) {
+	// Obtiene los roles desde el repositorio
+	result, err := p.repository.GetInf(ctx, filter, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convierte los resultados
+	if len(result) == 0 {
+		return &models.VisitSveltResponse{
+			Items:      []models.VisitSvelt{},
+			TotalCount: 0,
+		}, nil
+	}
+
+	response, ok := result[0].(models.VisitSveltResponse)
+	if !ok {
+		return nil, fmt.Errorf("tipo de respuesta inesperado del repositorio")
+	}
+
+	return &response, nil
+
+}
+
 // GetByID user
 func (p *visitService) GetByID(ctx context.Context, ID string) (resp models.Visit, err error) {
 	roles, err := p.repository.GetByID(ctx, ID)
@@ -89,8 +113,40 @@ func (p *visitService) Update(ctx context.Context, ID string, visit models.Visit
 	// Actualizar los campos solo si no son nil
 	// Actualizar la fecha de modificación
 	//now := time.Now().UTC()
-	if visit.CustomerType != "" {
-		dbVisit.CustomerType = *&visit.CustomerType
+
+	dbVisit.StartedAt = visit.StartedAt
+	if visit.StartLatitude != nil {
+		dbVisit.StartLatitude = visit.StartLatitude
+	}
+	if visit.StartLongitude != nil {
+		dbVisit.StartLongitude = visit.StartLongitude
+	}
+	if visit.StartAddress != nil {
+		dbVisit.StartAddress = visit.StartAddress
+	}
+	if visit.EndedAt != nil {
+		dbVisit.EndedAt = visit.EndedAt
+	}
+	if visit.EndLatitude != nil {
+		dbVisit.EndLatitude = visit.EndLatitude
+	}
+	if visit.EndLongitude != nil {
+		dbVisit.EndLongitude = visit.EndLongitude
+	}
+	if visit.EndAddress != nil {
+		dbVisit.EndAddress = visit.EndAddress
+	}
+	if visit.DeviceInfo != nil {
+		dbVisit.DeviceInfo = visit.DeviceInfo
+	}
+	if visit.FinalComments != nil {
+		dbVisit.FinalComments = visit.FinalComments
+	}
+	if visit.DeviceInfo != nil {
+		dbVisit.DeviceInfo = visit.DeviceInfo
+	}
+	if visit.FinalComments != nil {
+		dbVisit.FinalComments = visit.FinalComments
 	}
 
 	// Llamar al repositorio para actualizar la entidad

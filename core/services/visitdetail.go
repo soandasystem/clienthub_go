@@ -89,8 +89,8 @@ func (p *visitDetailService) Update(ctx context.Context, ID string, visit models
 	// Actualizar los campos solo si no son nil
 	// Actualizar la fecha de modificación
 	//now := time.Now().UTC()
-	if *visit.Complaints != "" {
-		dbVisit.Competitors = *&visit.Complaints
+	if visit.Competitors != nil && *visit.Complaints != "" {
+		dbVisit.Competitors = visit.Complaints
 	}
 
 	// Llamar al repositorio para actualizar la entidad

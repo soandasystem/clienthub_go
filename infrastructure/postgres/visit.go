@@ -60,7 +60,39 @@ func (s *visitRepository) Create(ctx context.Context, visit interface{}) (string
 }
 
 func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interface{}, skip, take *int) ([]interface{}, error) {
-	return nil, nil
+	//asigna el schma a usar
+	DB := infrastructure.GetDBWithSchema(ctx, s.DB)
+	var registro []models.VisitSvelt
+	// Crea una consulta base
+	query := DB.WithContext(ctx).Model(&models.VisitSvelt{})
+
+	// Aplica filtros si existen
+	for key, value := range filter {
+		query = query.Where(fmt.Sprintf("%s = ?", key), value)
+	}
+
+	// Aplica paginación si 'skip' y 'take' están definidos
+	if skip != nil && take != nil {
+		query = query.Offset(*skip).Limit(*take)
+	}
+
+	// Ejecuta la consulta
+	if err := query.Preload("Visitas").Find(&registro).Error; err != nil {
+		return nil, err
+	}
+
+	if len(registro) < 1 {
+		return nil, wrappers.NewNonExistentErr(sql.ErrNoRows)
+	}
+
+	// Mapear a la estructura de respuesta
+	response := models.VisitSveltResponse{
+		Items:      registro,
+		TotalCount: 0,
+	}
+
+	// Devolver como slice de interface{} para cumplir con la interfaz
+	return []interface{}{response}, nil
 }
 
 func (s *visitRepository) Get(ctx context.Context, filter map[string]interface{}, skip, take *int) ([]interface{}, error) {

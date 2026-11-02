@@ -22,6 +22,7 @@ func SetVisitRoutes(ctx context.Context, cfg config.Config, r *gin.Engine, p por
 		authGroup.POST("Visit", createVisit(p))
 		authGroup.GET("Visit", getAllVisit(p))
 		authGroup.GET("Visit/:id", getVisitByID(p))
+		authGroup.GET("Visit/informe", getInfVisit(p))
 		authGroup.PATCH("Visit/:id", updateVisit(p))
 		authGroup.DELETE("Visit/:id", deleteVisit(p))
 	}
@@ -73,6 +74,51 @@ func createVisit(p ports.VisitService) gin.HandlerFunc {
 		response := util.NewSuccessResponse(result, http.StatusAccepted)
 		c.JSON(response.StatusCode, response)
 	}
+}
+
+// @Summary Get inf all visitas
+// @Description Gets all the visit
+// @Tags visit
+// @Success 200 {array} models.VisitSvelt "OK"
+// @Failure 400 {object} object
+// @Failure 401 {object} object
+// @Failure 408 {object} object
+// @Failure 500 {object} object
+// @Security Bearer
+// @Router /api/v2027_01/visit/informe [get]
+func getInfVisit(p ports.VisitService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// El ctx ya tiene timeout + schema
+		ctx := c.Request.Context()
+
+		filter := make(map[string]interface{})
+
+		// Obtener todos los parámetros de consulta
+		queryParams := c.Request.URL.Query()
+		// Convertir a un map[string]interface{}
+		for key, values := range queryParams {
+			if len(values) > 1 {
+				// Si hay múltiples valores, los almacenamos como slice
+				filter[key] = values
+			} else {
+				// Si hay un solo valor, lo almacenamos directamente
+				filter[key] = values[0]
+			}
+		}
+		result, err := p.GetInforme(ctx, filter)
+		if err != nil {
+			response := util.NewErrorResponse(err, http.StatusInternalServerError)
+			c.JSON(response.StatusCode, response)
+			return
+		}
+		// Agregar el total count al header (fuera del wrapper JSON)
+		c.Header("X-Total-Count", strconv.FormatInt(result.TotalCount, 10))
+
+		// Enviar solo los items en el wrapper de éxito
+		response := util.NewSuccessResponse(result.Items, http.StatusOK)
+		c.JSON(response.StatusCode, response)
+	}
+
 }
 
 // @Summary Get all Visit

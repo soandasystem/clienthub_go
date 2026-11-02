@@ -30,6 +30,29 @@ type Visit struct {
 	UpdatedAt      time.Time      `gorm:"not null;default:now()" json:"updated_at"`
 }
 
+type UpdateVisit struct {
+	ID             int64           `gorm:"primaryKey;autoIncrement" json:"id"`
+	SellerID       *int64          `gorm:"not null" json:"seller_id"`
+	CustomerType   *string         `gorm:"type:varchar(20);not null" json:"customer_type"`
+	CRMCustomerID  *string         `gorm:"type:varchar(100)" json:"crm_customer_id"`
+	ProspectID     *int64          `json:"prospect_id"`
+	ScheduledAt    *time.Time      `json:"scheduled_at"`
+	Status         *string         `gorm:"type:varchar(20);not null;default:PLANNED" json:"status"`
+	StartedAt      *time.Time      `json:"started_at"`
+	StartLatitude  *float64        `gorm:"type:numeric(10,7)" json:"start_latitude"`
+	StartLongitude *float64        `gorm:"type:numeric(10,7)" json:"start_longitude"`
+	StartAddress   *string         `gorm:"type:text" json:"start_address"`
+	EndedAt        *time.Time      `json:"ended_at"`
+	EndLatitude    *float64        `gorm:"type:numeric(10,7)" json:"end_latitude"`
+	EndLongitude   *float64        `gorm:"type:numeric(10,7)" json:"end_longitude"`
+	EndAddress     *string         `gorm:"type:text" json:"end_address"`
+	DeviceInfo     *datatypes.JSON `gorm:"type:jsonb;not null;default:'{}'" json:"device_info"`
+	FinalComments  *string         `gorm:"type:text" json:"final_comments"`
+	CreatedBy      *int64          `gorm:"not null" json:"created_by"`
+	CreatedAt      time.Time       `gorm:"not null;default:now()" json:"created_at"`
+	UpdatedAt      time.Time       `gorm:"not null;default:now()" json:"updated_at"`
+}
+
 func (Visit) TableName() string {
 	return "salesvisit.visits"
 }
@@ -37,6 +60,48 @@ func (Visit) TableName() string {
 type VisitListResponse struct {
 	Items      []Visit `json:"items"`
 	TotalCount int64   `json:"totalCount"`
+}
+
+type VisitSvelt struct {
+	ID        int64       `json:"id"`
+	Username  string      `json:"username"`
+	FullName  string      `json:"full_name"`
+	Email     string      `json:"email"`
+	RolesId   int64       `json:"roles_id"`
+	Rol       RolesReport `json:"rol" gorm:"foreignKey:RolesId;references:ID"`
+	Active    bool        `json:"active"`
+	Zone      string      `json:"zone"`
+	CompanyId int64       `json:"company_id"`
+	CreatedAt time.Time   `gorm:"autoCreateTime"`
+	Visitas   []Visitas   `gorm:"foreignKey:SellerID;references:ID" json:"visit"`
+}
+
+type Visitas struct {
+	ID             int64          `gorm:"primaryKey;autoIncrement" json:"id"`
+	SellerID       int64          `gorm:"not null" json:"seller_id"`
+	CustomerType   string         `gorm:"type:varchar(20);not null" json:"customer_type"`
+	CRMCustomerID  string         `gorm:"type:varchar(100)" json:"crm_customer_id"`
+	ProspectID     int64          `json:"prospect_id"`
+	ScheduledAt    time.Time      `json:"scheduled_at"`
+	Status         string         `gorm:"type:varchar(20);not null;default:PLANNED" json:"status"`
+	StartedAt      time.Time      `json:"started_at"`
+	StartLatitude  float64        `gorm:"type:numeric(10,7)" json:"start_latitude"`
+	StartLongitude float64        `gorm:"type:numeric(10,7)" json:"start_longitude"`
+	StartAddress   string         `gorm:"type:text" json:"start_address"`
+	EndedAt        time.Time      `json:"ended_at"`
+	EndLatitude    float64        `gorm:"type:numeric(10,7)" json:"end_latitude"`
+	EndLongitude   float64        `gorm:"type:numeric(10,7)" json:"end_longitude"`
+	EndAddress     string         `gorm:"type:text" json:"end_address"`
+	DeviceInfo     datatypes.JSON `gorm:"type:jsonb;not null;default:'{}'" json:"device_info"`
+	FinalComments  string         `gorm:"type:text" json:"final_comments"`
+	CreatedBy      int64          `gorm:"not null" json:"created_by"`
+	CreatedAt      time.Time      `gorm:"not null;default:now()" json:"created_at"`
+	UpdatedAt      time.Time      `gorm:"not null;default:now()" json:"updated_at"`
+}
+
+type VisitSveltResponse struct {
+	Items      []VisitSvelt `json:"items"`
+	TotalCount int64        `json:"totalCount"`
 }
 
 type VisitDetail struct {
