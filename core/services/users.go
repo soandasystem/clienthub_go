@@ -125,6 +125,18 @@ func (p *usersService) Update(ctx context.Context, ID string, users models.Updat
 	if users.Active != nil {
 		dbUsers.Active = *users.Active
 	}
+	if users.Zone != nil {
+		dbUsers.Zone = *users.Zone
+	}
+	if users.CompanyId != nil {
+		dbUsers.CompanyId = *users.CompanyId
+	}
+	if users.Author != nil {
+		dbUsers.Author = *users.Author
+	}
+	if users.Phone != nil {
+		dbUsers.Phone = *users.Phone
+	}
 
 	dbUsers.CreatedAt = now
 	// Llamar al repositorio para actualizar la entidad

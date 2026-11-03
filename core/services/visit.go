@@ -110,9 +110,6 @@ func (p *visitService) Update(ctx context.Context, ID string, visit models.Visit
 	if err != nil {
 		return
 	}
-	// Actualizar los campos solo si no son nil
-	// Actualizar la fecha de modificación
-	//now := time.Now().UTC()
 
 	dbVisit.StartedAt = visit.StartedAt
 	if visit.StartLatitude != nil {

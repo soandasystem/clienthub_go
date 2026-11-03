@@ -12,6 +12,8 @@ type Users struct {
 	Active       bool      `json:"active"`
 	Zone         string    `json:"zone"`
 	CompanyId    int64     `json:"company_id"`
+	Author       string    `json:"author"`
+	Phone        string    `json:"phone"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 }
 
@@ -26,6 +28,8 @@ type UsersResp struct {
 	Active       bool      `json:"active"`
 	Zone         string    `json:"zone"`
 	CompanyId    int64     `json:"company_id"`
+	Author       string    `json:"author"`
+	Phone        string    `json:"phone"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 }
 
@@ -44,6 +48,8 @@ type CreateUsersReq struct {
 	Active       bool      `json:"active"`
 	Zone         string    `json:"zone"`
 	CompanyId    int64     `json:"company_id"`
+	Author       string    `json:"author"`
+	Phone        string    `json:"phone"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 }
 
@@ -61,6 +67,8 @@ type UpdateUsersReq struct {
 	Active       *bool      `json:"active"`
 	Zone         *string    `json:"zone"`
 	CompanyId    *int64     `json:"company_id"`
+	Author       *string    `json:"author"`
+	Phone        *string    `json:"phone"`
 	CreatedAt    *time.Time `gorm:"autoCreateTime"`
 }
 
@@ -79,6 +87,8 @@ type UsersInf struct {
 	Active       bool        `json:"active"`
 	Zone         string      `json:"zone"`
 	CompanyId    int64       `json:"company_id"`
+	Author       string      `json:"author"`
+	Phone        string      `json:"phone"`
 	CreatedAt    time.Time   `gorm:"autoCreateTime"`
 }
 
@@ -101,6 +111,8 @@ type UsersReport struct {
 	Active       bool      `json:"active"`
 	Zone         string    `json:"zone"`
 	CompanyId    int64     `json:"company_id"`
+	Author       string    `json:"author"`
+	Phone        string    `json:"phone"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 }
 
