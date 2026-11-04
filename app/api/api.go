@@ -38,6 +38,7 @@ type svs struct {
 	upload         ports.UploadService
 	visit          ports.VisitService
 	visitdetail    ports.VisitDetailService
+	prospect       ports.ProspectService
 }
 
 // New creates a new API
@@ -50,6 +51,7 @@ func New(ctx context.Context, cfg config.Config) (a api) {
 	var schemaRegistryRepo ports.SchemaRegistryRepository
 	var visitRepo ports.VisitRepository
 	var visitdetailRepo ports.VisitDetailRepository
+	var propectRepo ports.ProspectRepository
 
 	//abre la base de datos
 	db, err := infrastructure.ConnectPostgresOrm(ctx, a.config.DSN)
@@ -63,6 +65,7 @@ func New(ctx context.Context, cfg config.Config) (a api) {
 	schemaRegistryRepo = postgres.NewSchemaRegistryRepository(ctx, db)
 	visitRepo = postgres.NewVisitRepository(ctx, db)
 	visitdetailRepo = postgres.NewVisitDetailRepository(ctx, db)
+	prospectRepo = postgres.NewProspectrRepository(ctx, db)
 
 	a.services.company = services.NewCompanyService(a.config, companyRepo)
 	a.services.roles = services.NewRolesService(a.config, rolesRepo)
@@ -70,7 +73,7 @@ func New(ctx context.Context, cfg config.Config) (a api) {
 	a.services.schemaRegistry = services.NewSchemaRegistryService(a.config, schemaRegistryRepo)
 	a.services.visit = services.NewVisitService(a.config, visitRepo)
 	a.services.visitdetail = services.NewVisitDetailService(a.config, visitdetailRepo)
-
+	a.services.prospect = services.NewProspectService(a.config, prospectRepo)
 	// Inicializar B2 Storage y Upload Service
 	var b2Storage ports.UploadStorage
 	if a.config.B2Endpoint != "" {
@@ -142,6 +145,7 @@ func (a *api) Run(ctx context.Context, cancel context.CancelFunc) func() error {
 		handlers.SetSchemaRegistryRoutes(ctx, a.config, router, a.services.schemaRegistry)
 		handlers.SetVisitRoutes(ctx, a.config, router, a.services.visit)
 		handlers.SetVisitDetailRoutes(ctx, a.config, router, a.services.visitdetail)
+		handlers.SetProspectRoutes(ctx, a.config, router, a.services.prospect)
 
 		if a.services.upload != nil {
 			handlers.SetUploadRoutes(ctx, a.config, router, a.services.upload)

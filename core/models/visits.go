@@ -306,18 +306,41 @@ type Prospect struct {
 	Status                 string    `gorm:"type:varchar(30);not null;default:NEW" json:"status"`
 	AssignedSellerID       *int64    `json:"assigned_seller_id"`
 	ConvertedCRMCustomerID *string   `gorm:"type:varchar(100)" json:"converted_crm_customer_id"`
+	Type                   *string   `gorm:"type:varchar(100)" json:"type"`
 	CreatedBy              int64     `gorm:"not null" json:"created_by"`
 	CreatedAt              time.Time `gorm:"not null;default:now()" json:"created_at"`
 	UpdatedAt              time.Time `gorm:"not null;default:now()" json:"updated_at"`
 }
 
 func (Prospect) TableName() string {
-	return "salesvisit.prospects"
+	return "prospects"
 }
 
 type ProspectListResponse struct {
 	Items      []Prospect `json:"items"`
 	TotalCount int64      `json:"totalCount"`
+}
+
+type UpdateProspect struct {
+	ID                     int64      `json:"-"`
+	CompanyName            *string    `gorm:"type:varchar(200);not null" json:"company_name"`
+	ContactName            *string    `gorm:"type:varchar(150)" json:"contact_name"`
+	Phone                  *string    `gorm:"type:varchar(40)" json:"phone"`
+	Email                  *string    `gorm:"type:varchar(150)" json:"email"`
+	Address                *string    `gorm:"type:text" json:"address"`
+	City                   *string    `gorm:"type:varchar(100)" json:"city"`
+	BusinessActivity       *string    `gorm:"type:varchar(150)" json:"business_activity"`
+	Status                 *string    `gorm:"type:varchar(30);not null;default:NEW" json:"status"`
+	AssignedSellerID       *int64     `json:"assigned_seller_id"`
+	ConvertedCRMCustomerID *string    `gorm:"type:varchar(100)" json:"converted_crm_customer_id"`
+	Type                   *string    `gorm:"type:varchar(100)" json:"type"`
+	CreatedBy              *int64     `gorm:"not null" json:"created_by"`
+	CreatedAt              *time.Time `gorm:"not null;default:now()" json:"created_at"`
+	UpdatedAt              *time.Time `gorm:"not null;default:now()" json:"updated_at"`
+}
+
+func (UpdateProspect) TableName() string {
+	return "prospects"
 }
 
 // registros externos
@@ -332,7 +355,7 @@ type ExternalRecord struct {
 }
 
 func (ExternalRecord) TableName() string {
-	return "salesvisit.external_records"
+	return "external_records"
 }
 
 type ExternalRecordListResponse struct {
