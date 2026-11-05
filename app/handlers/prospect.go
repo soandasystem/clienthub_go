@@ -3,6 +3,7 @@ package handlers
 import (
 	"clienthub_go/config"
 	"clienthub_go/core/models"
+	"clienthub_go/core/ports"
 	"clienthub_go/util"
 	"context"
 	"encoding/json"
@@ -14,7 +15,7 @@ import (
 )
 
 // SetprospectRoutes creates prospect routes
-func SetprospectRoutes(ctx context.Context, cfg config.Config, r *gin.Engine, p ports.prospectService) {
+func SetProspectRoutes(ctx context.Context, cfg config.Config, r *gin.Engine, p ports.ProspectService) {
 	//	r.Use(middlewares.Recover())
 	authGroup := r.Group("api/v2027_01/")
 	{
@@ -36,7 +37,7 @@ func SetprospectRoutes(ctx context.Context, cfg config.Config, r *gin.Engine, p 
 // @Failure 500 {object} object
 // @Security Bearer
 // @Router /api/v2027_01/prospect [post]
-func createProspect(p ports.prospectService) gin.HandlerFunc {
+func createProspect(p ports.ProspectService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// El ctx ya tiene timeout + schema
 		ctx := c.Request.Context()
@@ -50,7 +51,7 @@ func createProspect(p ports.prospectService) gin.HandlerFunc {
 		}
 
 		// Parsear el JSON al modelo adecuado
-		var prospect models.CreateprospectReq
+		var prospect models.Prospect
 		err = json.Unmarshal(body, &prospect)
 		if err != nil {
 			response := util.NewErrorResponse(err, http.StatusInternalServerError)
@@ -84,7 +85,7 @@ func createProspect(p ports.prospectService) gin.HandlerFunc {
 // @Failure 500 {object} object
 // @Security Bearer
 // @Router /api/v2027_01/prospect [get]
-func getAllProspect(p ports.prospectService) gin.HandlerFunc {
+func getAllProspect(p ports.ProspectService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// El ctx ya tiene timeout + schema
 		ctx := c.Request.Context()
@@ -131,7 +132,7 @@ func getAllProspect(p ports.prospectService) gin.HandlerFunc {
 // @Failure 500 {object} object
 // @Security Bearer
 // @Router /api/v2027_01/prospect/{id} [get]
-func getProspectByID(p ports.prospectService) gin.HandlerFunc {
+func getProspectByID(p ports.ProspectService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// El ctx ya tiene timeout + schema
 		ctx := c.Request.Context()
@@ -160,7 +161,7 @@ func getProspectByID(p ports.prospectService) gin.HandlerFunc {
 // @Failure 500 {object} object
 // @Security Bearer
 // @Router /api/v2027_01/prospect/{id} [patch]
-func updateProspect(p ports.prospectService) gin.HandlerFunc {
+func updateProspect(p ports.ProspectService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// El ctx ya tiene timeout + schema
 		ctx := c.Request.Context()
@@ -173,7 +174,7 @@ func updateProspect(p ports.prospectService) gin.HandlerFunc {
 		}
 
 		params := c.Params
-		var prospect models.UpdateprospectReq
+		var prospect models.UpdateProspect
 		err = json.Unmarshal(body, &prospect)
 		if err != nil {
 			response := util.NewErrorResponse(err, http.StatusInternalServerError)
@@ -205,7 +206,7 @@ func updateProspect(p ports.prospectService) gin.HandlerFunc {
 // @Failure 500 {object} object
 // @Security Bearer
 // @Router /api/v2027_01/prospect/{id} [delete]
-func deleteProspect(p ports.prospectService) gin.HandlerFunc {
+func deleteProspect(p ports.ProspectService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// El ctx ya tiene timeout + schema
 		ctx := c.Request.Context()

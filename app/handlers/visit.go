@@ -19,12 +19,12 @@ func SetVisitRoutes(ctx context.Context, cfg config.Config, r *gin.Engine, p por
 	//	r.Use(middlewares.Recover())
 	authGroup := r.Group("api/v2027_01/")
 	{
-		authGroup.POST("Visit", createVisit(p))
-		authGroup.GET("Visit", getAllVisit(p))
-		authGroup.GET("Visit/:id", getVisitByID(p))
-		authGroup.GET("Visit/informe", getInfVisit(p))
-		authGroup.PATCH("Visit/:id", updateVisit(p))
-		authGroup.DELETE("Visit/:id", deleteVisit(p))
+		authGroup.POST("visit", createVisit(p))
+		authGroup.GET("visit", getAllVisit(p))
+		authGroup.GET("visit/:id", getVisitByID(p))
+		authGroup.GET("visit/informe", getInfVisit(p))
+		authGroup.PATCH("visit/:id", updateVisit(p))
+		authGroup.DELETE("visit/:id", deleteVisit(p))
 	}
 }
 

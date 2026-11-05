@@ -51,7 +51,7 @@ func New(ctx context.Context, cfg config.Config) (a api) {
 	var schemaRegistryRepo ports.SchemaRegistryRepository
 	var visitRepo ports.VisitRepository
 	var visitdetailRepo ports.VisitDetailRepository
-	var propectRepo ports.ProspectRepository
+	var prospectRepo ports.ProspectRepository
 
 	//abre la base de datos
 	db, err := infrastructure.ConnectPostgresOrm(ctx, a.config.DSN)
@@ -65,7 +65,7 @@ func New(ctx context.Context, cfg config.Config) (a api) {
 	schemaRegistryRepo = postgres.NewSchemaRegistryRepository(ctx, db)
 	visitRepo = postgres.NewVisitRepository(ctx, db)
 	visitdetailRepo = postgres.NewVisitDetailRepository(ctx, db)
-	prospectRepo = postgres.NewProspectrRepository(ctx, db)
+	prospectRepo = postgres.NewProspectRepository(ctx, db)
 
 	a.services.company = services.NewCompanyService(a.config, companyRepo)
 	a.services.roles = services.NewRolesService(a.config, rolesRepo)

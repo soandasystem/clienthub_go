@@ -87,8 +87,8 @@ func (p *prospectService) Update(ctx context.Context, ID string, Prospect models
 	}
 	// Actualizar los campos solo si no son nil
 	// Actualizar la fecha de modificación
-	if Prospect.CompanyName != nil {
-		dbProspect.CompanyName = *Prospect.CompanyName
+	if Prospect.CompanyName != "" {
+		dbProspect.CompanyName = Prospect.CompanyName
 	}
 	if Prospect.ContactName != nil {
 		dbProspect.ContactName = Prospect.ContactName
@@ -108,8 +108,8 @@ func (p *prospectService) Update(ctx context.Context, ID string, Prospect models
 	if Prospect.BusinessActivity != nil {
 		dbProspect.BusinessActivity = Prospect.BusinessActivity
 	}
-	if Prospect.Status != nil {
-		dbProspect.Status = *Prospect.Status
+	if Prospect.Status != "" {
+		dbProspect.Status = Prospect.Status
 	}
 	if Prospect.AssignedSellerID != nil {
 		dbProspect.AssignedSellerID = Prospect.AssignedSellerID
@@ -122,6 +122,15 @@ func (p *prospectService) Update(ctx context.Context, ID string, Prospect models
 	}
 	if Prospect.CreatedBy != nil {
 		dbProspect.CreatedBy = *Prospect.CreatedBy
+	}
+	if Prospect.City != nil {
+		dbProspect.City = Prospect.City
+	}
+	if Prospect.Region != nil {
+		dbProspect.Region = Prospect.Region
+	}
+	if Prospect.Type != nil {
+		dbProspect.Type = Prospect.Type
 	}
 
 	// Llamar al repositorio para actualizar la entidad
