@@ -48,7 +48,7 @@ func (p *visitService) GetAll(ctx context.Context, filter map[string]interface{}
 	// Convierte los resultados
 	if len(result) == 0 {
 		return &models.VisitListResponse{
-			Items:      []models.Visit{},
+			Items:      []models.ListVisit{},
 			TotalCount: 0,
 		}, nil
 	}
@@ -61,7 +61,7 @@ func (p *visitService) GetAll(ctx context.Context, filter map[string]interface{}
 	return &response, nil
 }
 
-func (p *visitService) GetInforme(ctx context.Context, filter map[string]interface{}) (*models.VisitSveltResponse, error) {
+func (p *visitService) GetInforme(ctx context.Context, filter map[string]interface{}) (*models.VisitUsersResponse, error) {
 	// Obtiene los roles desde el repositorio
 	result, err := p.repository.GetInf(ctx, filter, nil, nil)
 	if err != nil {
@@ -70,13 +70,13 @@ func (p *visitService) GetInforme(ctx context.Context, filter map[string]interfa
 
 	// Convierte los resultados
 	if len(result) == 0 {
-		return &models.VisitSveltResponse{
-			Items:      []models.VisitSvelt{},
+		return &models.VisitUsersResponse{
+			Items:      []models.VisitUsers{},
 			TotalCount: 0,
 		}, nil
 	}
 
-	response, ok := result[0].(models.VisitSveltResponse)
+	response, ok := result[0].(models.VisitUsersResponse)
 	if !ok {
 		return nil, fmt.Errorf("tipo de respuesta inesperado del repositorio")
 	}
@@ -144,6 +144,9 @@ func (p *visitService) Update(ctx context.Context, ID string, visit models.Visit
 	}
 	if visit.FinalComments != nil {
 		dbVisit.FinalComments = visit.FinalComments
+	}
+	if visit.Objective != nil {
+		dbVisit.Objective = visit.Objective
 	}
 
 	// Llamar al repositorio para actualizar la entidad

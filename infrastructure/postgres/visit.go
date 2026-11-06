@@ -62,9 +62,9 @@ func (s *visitRepository) Create(ctx context.Context, visit interface{}) (string
 func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interface{}, skip, take *int) ([]interface{}, error) {
 	//asigna el schma a usar
 	DB := infrastructure.GetDBWithSchema(ctx, s.DB)
-	var registro []models.VisitSvelt
+	var registro []models.VisitUsers
 	// Crea una consulta base
-	query := DB.WithContext(ctx).Model(&models.VisitSvelt{})
+	query := DB.WithContext(ctx).Model(&models.VisitUsers{})
 
 	// Aplica filtros si existen
 	for key, value := range filter {
@@ -77,7 +77,7 @@ func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interfac
 	}
 
 	// Ejecuta la consulta
-	if err := query.Preload("Visitas").Find(&registro).Error; err != nil {
+	if err := query.Preload("Seller").Preload("Customer").Preload("Prospects").Preload("Rol").Preload("Visitas").Find(&registro).Error; err != nil {
 		return nil, err
 	}
 
@@ -86,7 +86,7 @@ func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interfac
 	}
 
 	// Mapear a la estructura de respuesta
-	response := models.VisitSveltResponse{
+	response := models.VisitUsersResponse{
 		Items:      registro,
 		TotalCount: 0,
 	}
@@ -98,9 +98,9 @@ func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interfac
 func (s *visitRepository) Get(ctx context.Context, filter map[string]interface{}, skip, take *int) ([]interface{}, error) {
 	//asigna el schma a usar
 	DB := infrastructure.GetDBWithSchema(ctx, s.DB)
-	var registro []models.Visit
+	var registro []models.ListVisit
 	// Crea una consulta base
-	query := DB.WithContext(ctx).Model(&models.Visit{})
+	query := DB.WithContext(ctx).Model(&models.ListVisit{})
 
 	// Aplica filtros si existen
 	for key, value := range filter {

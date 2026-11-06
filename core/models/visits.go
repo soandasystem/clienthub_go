@@ -24,10 +24,15 @@ type Visit struct {
 	EndLongitude   *float64       `gorm:"type:numeric(10,7)" json:"end_longitude"`
 	EndAddress     *string        `gorm:"type:text" json:"end_address"`
 	DeviceInfo     datatypes.JSON `gorm:"type:jsonb;not null;default:'{}'" json:"device_info"`
+	Objective      *string        `gorm:"type:text" json:"objective"`
 	FinalComments  *string        `gorm:"type:text" json:"final_comments"`
-	CreatedBy      int64          `gorm:"not null" json:"created_by"`
+	CreatedBy      string         `gorm:"not null" json:"created_by"`
 	CreatedAt      time.Time      `gorm:"not null;default:now()" json:"created_at"`
 	UpdatedAt      time.Time      `gorm:"not null;default:now()" json:"updated_at"`
+}
+
+func (Visit) TableName() string {
+	return "salesvisit.visits"
 }
 
 type UpdateVisit struct {
@@ -48,21 +53,51 @@ type UpdateVisit struct {
 	EndAddress     *string         `gorm:"type:text" json:"end_address"`
 	DeviceInfo     *datatypes.JSON `gorm:"type:jsonb;not null;default:'{}'" json:"device_info"`
 	FinalComments  *string         `gorm:"type:text" json:"final_comments"`
-	CreatedBy      *int64          `gorm:"not null" json:"created_by"`
+	CreatedBy      *string         `gorm:"not null" json:"created_by"`
 	CreatedAt      time.Time       `gorm:"not null;default:now()" json:"created_at"`
 	UpdatedAt      time.Time       `gorm:"not null;default:now()" json:"updated_at"`
 }
 
-func (Visit) TableName() string {
+func (UpdateVisit) TableName() string {
+	return "salesvisit.visits"
+}
+
+type ListVisit struct {
+	ID             int64          `gorm:"primaryKey;autoIncrement" json:"id"`
+	SellerID       int64          `json:"seller_id"`
+	Seller         Users          `json:"users" gorm:"foreignKey:SellerID;references:ID"`
+	CustomerType   string         `json:"customer_type"`
+	CRMCustomerID  int64          `json:"crm_customer_id"`
+	Customer       Prospect       `json:"customer" gorm:"foreignKey:CRMCustomerID;references:ID"`
+	ProspectID     int64          `json:"prospect_id"`
+	Prospects      Prospect       `json:"prospects" gorm:"foreignKey:ProspectID;references:ID"`
+	ScheduledAt    time.Time      `json:"scheduled_at"`
+	Status         string         `json:"status"`
+	StartedAt      time.Time      `json:"started_at"`
+	StartLatitude  float64        `json:"start_latitude"`
+	StartLongitude float64        `json:"start_longitude"`
+	StartAddress   string         `json:"start_address"`
+	EndedAt        time.Time      `json:"ended_at"`
+	EndLatitude    float64        `json:"end_latitude"`
+	EndLongitude   float64        `json:"end_longitude"`
+	EndAddress     string         `json:"end_address"`
+	DeviceInfo     datatypes.JSON `json:"device_info"`
+	Objective      string         `json:"objective"`
+	FinalComments  string         `json:"final_comments"`
+	CreatedBy      string         `json:"created_by"`
+	CreatedAt      time.Time      `json:"created_at"`
+	UpdatedAt      time.Time      `json:"updated_at"`
+}
+
+func (ListVisit) TableName() string {
 	return "salesvisit.visits"
 }
 
 type VisitListResponse struct {
-	Items      []Visit `json:"items"`
-	TotalCount int64   `json:"totalCount"`
+	Items      []ListVisit `json:"items"`
+	TotalCount int64       `json:"totalCount"`
 }
-
-type VisitSvelt struct {
+type VisitUsers struct {
 	ID        int64       `json:"id"`
 	Username  string      `json:"username"`
 	FullName  string      `json:"full_name"`
@@ -73,34 +108,15 @@ type VisitSvelt struct {
 	Zone      string      `json:"zone"`
 	CompanyId int64       `json:"company_id"`
 	CreatedAt time.Time   `gorm:"autoCreateTime"`
-	Visitas   []Visitas   `gorm:"foreignKey:SellerID;references:ID" json:"visit"`
+	Visitas   []ListVisit `gorm:"foreignKey:SellerID;references:ID" json:"visit"`
 }
 
-type Visitas struct {
-	ID             int64          `gorm:"primaryKey;autoIncrement" json:"id"`
-	SellerID       int64          `gorm:"not null" json:"seller_id"`
-	CustomerType   string         `gorm:"type:varchar(20);not null" json:"customer_type"`
-	CRMCustomerID  string         `gorm:"type:varchar(100)" json:"crm_customer_id"`
-	ProspectID     int64          `json:"prospect_id"`
-	ScheduledAt    time.Time      `json:"scheduled_at"`
-	Status         string         `gorm:"type:varchar(20);not null;default:PLANNED" json:"status"`
-	StartedAt      time.Time      `json:"started_at"`
-	StartLatitude  float64        `gorm:"type:numeric(10,7)" json:"start_latitude"`
-	StartLongitude float64        `gorm:"type:numeric(10,7)" json:"start_longitude"`
-	StartAddress   string         `gorm:"type:text" json:"start_address"`
-	EndedAt        time.Time      `json:"ended_at"`
-	EndLatitude    float64        `gorm:"type:numeric(10,7)" json:"end_latitude"`
-	EndLongitude   float64        `gorm:"type:numeric(10,7)" json:"end_longitude"`
-	EndAddress     string         `gorm:"type:text" json:"end_address"`
-	DeviceInfo     datatypes.JSON `gorm:"type:jsonb;not null;default:'{}'" json:"device_info"`
-	FinalComments  string         `gorm:"type:text" json:"final_comments"`
-	CreatedBy      int64          `gorm:"not null" json:"created_by"`
-	CreatedAt      time.Time      `gorm:"not null;default:now()" json:"created_at"`
-	UpdatedAt      time.Time      `gorm:"not null;default:now()" json:"updated_at"`
+func (VisitUsers) TableName() string {
+	return "salesvisit.users"
 }
 
-type VisitSveltResponse struct {
-	Items      []VisitSvelt `json:"items"`
+type VisitUsersResponse struct {
+	Items      []VisitUsers `json:"items"`
 	TotalCount int64        `json:"totalCount"`
 }
 
