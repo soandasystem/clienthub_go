@@ -62,9 +62,9 @@ func (s *visitRepository) Create(ctx context.Context, visit interface{}) (string
 func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interface{}, skip, take *int) ([]interface{}, error) {
 	//asigna el schma a usar
 	DB := infrastructure.GetDBWithSchema(ctx, s.DB)
-	var registro []models.VisitUsers
+	var registro []models.ListVisit
 	// Crea una consulta base
-	query := DB.WithContext(ctx).Model(&models.VisitUsers{})
+	query := DB.WithContext(ctx).Model(&models.ListVisit{})
 
 	// Aplica filtros si existen
 	for key, value := range filter {
@@ -77,7 +77,7 @@ func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interfac
 	}
 
 	// Ejecuta la consulta
-	if err := query.Preload("Seller").Preload("Customer").Preload("Prospects").Preload("Rol").Preload("Visitas").Find(&registro).Error; err != nil {
+	if err := query.Preload("Seller").Preload("Customer").Find(&registro).Error; err != nil {
 		return nil, err
 	}
 
@@ -86,7 +86,7 @@ func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interfac
 	}
 
 	// Mapear a la estructura de respuesta
-	response := models.VisitUsersResponse{
+	response := models.VisitListResponse{
 		Items:      registro,
 		TotalCount: 0,
 	}
@@ -98,9 +98,9 @@ func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interfac
 func (s *visitRepository) Get(ctx context.Context, filter map[string]interface{}, skip, take *int) ([]interface{}, error) {
 	//asigna el schma a usar
 	DB := infrastructure.GetDBWithSchema(ctx, s.DB)
-	var registro []models.ListVisit
+	var registro []models.Visit
 	// Crea una consulta base
-	query := DB.WithContext(ctx).Model(&models.ListVisit{})
+	query := DB.WithContext(ctx).Model(&models.Visit{})
 
 	// Aplica filtros si existen
 	for key, value := range filter {
@@ -122,7 +122,7 @@ func (s *visitRepository) Get(ctx context.Context, filter map[string]interface{}
 	}
 
 	// Mapear a la estructura de respuesta
-	response := models.VisitListResponse{
+	response := models.VisitResponse{
 		Items:      registro,
 		TotalCount: 0,
 	}

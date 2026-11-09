@@ -26,6 +26,7 @@ type Visit struct {
 	DeviceInfo     datatypes.JSON `gorm:"type:jsonb;not null;default:'{}'" json:"device_info"`
 	Objective      *string        `gorm:"type:text" json:"objective"`
 	FinalComments  *string        `gorm:"type:text" json:"final_comments"`
+	CompanyID      int64          `gorm:"not null" json:"company_id"`
 	CreatedBy      string         `gorm:"not null" json:"created_by"`
 	CreatedAt      time.Time      `gorm:"not null;default:now()" json:"created_at"`
 	UpdatedAt      time.Time      `gorm:"not null;default:now()" json:"updated_at"`
@@ -33,6 +34,11 @@ type Visit struct {
 
 func (Visit) TableName() string {
 	return "salesvisit.visits"
+}
+
+type VisitResponse struct {
+	Items      []Visit `json:"items"`
+	TotalCount int64   `json:"totalCount"`
 }
 
 type UpdateVisit struct {
@@ -53,6 +59,7 @@ type UpdateVisit struct {
 	EndAddress     *string         `gorm:"type:text" json:"end_address"`
 	DeviceInfo     *datatypes.JSON `gorm:"type:jsonb;not null;default:'{}'" json:"device_info"`
 	FinalComments  *string         `gorm:"type:text" json:"final_comments"`
+	CompanyID      *int64          `gorm:"not null" json:"company_id"`
 	CreatedBy      *string         `gorm:"not null" json:"created_by"`
 	CreatedAt      time.Time       `gorm:"not null;default:now()" json:"created_at"`
 	UpdatedAt      time.Time       `gorm:"not null;default:now()" json:"updated_at"`
@@ -63,14 +70,12 @@ func (UpdateVisit) TableName() string {
 }
 
 type ListVisit struct {
-	ID             int64          `gorm:"primaryKey;autoIncrement" json:"id"`
+	ID             int64          `json:"id"`
 	SellerID       int64          `json:"seller_id"`
-	Seller         Users          `json:"users" gorm:"foreignKey:SellerID;references:ID"`
+	Seller         UsersInforme   `json:"users" gorm:"foreignKey:SellerID;references:ID"`
 	CustomerType   string         `json:"customer_type"`
-	CRMCustomerID  int64          `json:"crm_customer_id"`
-	Customer       Prospect       `json:"customer" gorm:"foreignKey:CRMCustomerID;references:ID"`
-	ProspectID     int64          `json:"prospect_id"`
-	Prospects      Prospect       `json:"prospects" gorm:"foreignKey:ProspectID;references:ID"`
+	CustomerID     int64          `json:"customer_id"`
+	Customer       ProspectInf    `json:"customer" gorm:"foreignKey:CustomerID;references:ID"`
 	ScheduledAt    time.Time      `json:"scheduled_at"`
 	Status         string         `json:"status"`
 	StartedAt      time.Time      `json:"started_at"`
@@ -84,6 +89,7 @@ type ListVisit struct {
 	DeviceInfo     datatypes.JSON `json:"device_info"`
 	Objective      string         `json:"objective"`
 	FinalComments  string         `json:"final_comments"`
+	CompanyID      int64          `json:"company_id"`
 	CreatedBy      string         `json:"created_by"`
 	CreatedAt      time.Time      `json:"created_at"`
 	UpdatedAt      time.Time      `json:"updated_at"`
@@ -97,29 +103,8 @@ type VisitListResponse struct {
 	Items      []ListVisit `json:"items"`
 	TotalCount int64       `json:"totalCount"`
 }
-type VisitUsers struct {
-	ID        int64       `json:"id"`
-	Username  string      `json:"username"`
-	FullName  string      `json:"full_name"`
-	Email     string      `json:"email"`
-	RolesId   int64       `json:"roles_id"`
-	Rol       RolesReport `json:"rol" gorm:"foreignKey:RolesId;references:ID"`
-	Active    bool        `json:"active"`
-	Zone      string      `json:"zone"`
-	CompanyId int64       `json:"company_id"`
-	CreatedAt time.Time   `gorm:"autoCreateTime"`
-	Visitas   []ListVisit `gorm:"foreignKey:SellerID;references:ID" json:"visit"`
-}
 
-func (VisitUsers) TableName() string {
-	return "salesvisit.users"
-}
-
-type VisitUsersResponse struct {
-	Items      []VisitUsers `json:"items"`
-	TotalCount int64        `json:"totalCount"`
-}
-
+/** --- ---- ---- ---- --- --- --- --- -- --- --- --- --- --- --- --- --- **/
 type VisitDetail struct {
 	ID                int64          `gorm:"primaryKey;autoIncrement" json:"id"`
 	VisitID           int64          `gorm:"not null;unique" json:"visit_id"`
@@ -363,6 +348,36 @@ func (UpdateProspect) TableName() string {
 	return "prospects"
 }
 
+type ProspectInf struct {
+	ID          int64   `gorm:"primaryKey;autoIncrement" json:"id"`
+	CompanyName string  `gorm:"type:varchar(200);not null" json:"company_name"`
+	ContactName *string `gorm:"type:varchar(150)" json:"contact_name"`
+	Phone       *string `gorm:"type:varchar(40)" json:"phone"`
+	Email       *string `gorm:"type:varchar(150)" json:"email"`
+}
+
+func (ProspectInf) TableName() string {
+	return "prospects"
+}
+
+type ClientsInf struct {
+	ID               int64  `json:"id"`
+	AssignedSellerID int64  `json:"assigned_seller_id"`
+	CompanyName      string `json:"company_name"`
+	ContactName      string `json:"contact_name"`
+	Phone            string `json:"phone"`
+	Email            string `json:"email"`
+	Address          string `json:"address"`
+	City             int64  `json:"city"`
+	Region           int64  `json:"region"`
+	Type             string `json:"type"`
+}
+
+func (ClientsInf) TableName() string {
+	return "prospects"
+}
+
+/**--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---  **/
 // registros externos
 type ExternalRecord struct {
 	ID              int64      `gorm:"primaryKey;autoIncrement" json:"id"`

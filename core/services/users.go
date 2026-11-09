@@ -38,6 +38,30 @@ func (p *usersService) Create(ctx context.Context, users models.CreateUsersReq) 
 	return insertedID, err
 }
 
+func (p *usersService) GetInforme(ctx context.Context, filter map[string]interface{}) (*models.UsersListInforme, error) {
+	// Obtiene los roles desde el repositorio
+	result, err := p.repository.GetInf(ctx, filter, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convierte los resultados
+	if len(result) == 0 {
+		return &models.UsersListInforme{
+			Items:      []models.UsersInforme{},
+			TotalCount: 0,
+		}, nil
+	}
+
+	response, ok := result[0].(models.UsersListInforme)
+	if !ok {
+		return nil, fmt.Errorf("tipo de respuesta inesperado del repositorio")
+	}
+
+	return &response, nil
+
+}
+
 // GetAll users
 func (p *usersService) GetAll(ctx context.Context, filter map[string]interface{}) (*models.UsersListResponse, error) {
 	// Obtiene los roles desde el repositorio

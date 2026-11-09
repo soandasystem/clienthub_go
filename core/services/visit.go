@@ -61,7 +61,7 @@ func (p *visitService) GetAll(ctx context.Context, filter map[string]interface{}
 	return &response, nil
 }
 
-func (p *visitService) GetInforme(ctx context.Context, filter map[string]interface{}) (*models.VisitUsersResponse, error) {
+func (p *visitService) GetInforme(ctx context.Context, filter map[string]interface{}) (*models.VisitListResponse, error) {
 	// Obtiene los roles desde el repositorio
 	result, err := p.repository.GetInf(ctx, filter, nil, nil)
 	if err != nil {
@@ -70,13 +70,13 @@ func (p *visitService) GetInforme(ctx context.Context, filter map[string]interfa
 
 	// Convierte los resultados
 	if len(result) == 0 {
-		return &models.VisitUsersResponse{
-			Items:      []models.VisitUsers{},
+		return &models.VisitListResponse{
+			Items:      []models.ListVisit{},
 			TotalCount: 0,
 		}, nil
 	}
 
-	response, ok := result[0].(models.VisitUsersResponse)
+	response, ok := result[0].(models.VisitListResponse)
 	if !ok {
 		return nil, fmt.Errorf("tipo de respuesta inesperado del repositorio")
 	}

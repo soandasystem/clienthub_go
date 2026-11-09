@@ -84,7 +84,89 @@ func (s *usersRepository) Create(ctx context.Context, users interface{}) (string
 }
 
 func (s *usersRepository) GetInf(ctx context.Context, filter map[string]interface{}, skip, take *int) ([]interface{}, error) {
-	return nil, nil
+	var registro []models.UsersInforme
+	var totalCount int64
+
+	// 1. Procesar el filtro para separar offset/limit de los WHERE
+	if len(filter) != 0 {
+		for key, value := range filter {
+			if key == "offset" || key == "limit" {
+				// Conversión segura a int
+				var intVal int
+				switch v := value.(type) {
+				case int:
+					intVal = v
+				case float64:
+					intVal = int(v)
+				case string:
+					parsed, err := strconv.Atoi(v)
+					if err != nil {
+						return nil, nil
+					}
+					intVal = parsed
+				default:
+					return nil, nil
+				}
+
+				// Asignación correcta
+				switch key {
+				case "offset":
+					newSkip := intVal
+					skip = &newSkip
+				case "limit":
+					newTake := intVal
+					take = &newTake
+				}
+
+				delete(filter, key)
+			}
+		}
+	}
+
+	//asigna el schma a usar
+	DB := infrastructure.GetDBWithSchema(ctx, s.DB)
+
+	// Crea una consulta base
+	query := DB.WithContext(ctx).Model(&models.UsersInforme{})
+
+	// Aplica filtros si existen
+	if len(filter) != 0 {
+		for key, value := range filter {
+			query = query.Where(fmt.Sprintf("%s = ?", key), value)
+		}
+	}
+
+	// 2. Consulta para contar el total (sin paginación)
+	if err := query.Count(&totalCount).Error; err != nil {
+		return nil, err
+	}
+
+	// Verificar si skip y take son nil
+	fmt.Println("skip:", skip, "take:", take)
+
+	// Aplica paginación si 'skip' y 'take' están definidos
+	if skip != nil && take != nil {
+		query = query.Offset(*skip).Limit(*take)
+	}
+
+	// Ejecuta la consulta
+	if err := query.Preload("Clients").Find(&registro).Error; err != nil {
+		return nil, err
+	}
+
+	if len(registro) < 1 {
+		return nil, wrappers.NewNonExistentErr(sql.ErrNoRows)
+	}
+
+	// Mapear a la estructura de respuesta
+	response := models.UsersListInforme{
+		Items:      registro,
+		TotalCount: totalCount,
+	}
+	// Devolver como slice de interface{} para cumplir con la interfaz
+	return []interface{}{response}, nil
+	// return result, nil
+
 }
 
 func (s *usersRepository) Get(ctx context.Context, filter map[string]interface{}, skip, take *int) ([]interface{}, error) {
@@ -139,7 +221,7 @@ func (s *usersRepository) Get(ctx context.Context, filter map[string]interface{}
 			query = query.Where(fmt.Sprintf("%s = ?", key), value)
 		}
 	}
-	
+
 	// 2. Consulta para contar el total (sin paginación)
 	if err := query.Count(&totalCount).Error; err != nil {
 		return nil, err

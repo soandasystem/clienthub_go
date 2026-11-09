@@ -22,6 +22,7 @@ func SetUsersRoutes(ctx context.Context, cfg config.Config, r *gin.Engine, p por
 	{
 		authGroup.POST("users", createUsers(p))
 		authGroup.GET("users", getAllUsers(p))
+		authGroup.GET("users/informe", getInfUsers(p))
 		authGroup.GET("users/:id", getUsersByID(p))
 		authGroup.PATCH("users/:id", updateUsers(p))
 		authGroup.DELETE("users/:id", deleteUsers(p))
@@ -108,6 +109,52 @@ func getAllUsers(p ports.UsersService) gin.HandlerFunc {
 		}
 
 		result, err := p.GetAll(ctx, filter)
+		if err != nil {
+			response := util.NewErrorResponse(err, http.StatusInternalServerError)
+			c.JSON(response.StatusCode, response)
+			return
+		}
+		// Agregar el total count al header (fuera del wrapper JSON)
+		c.Header("X-Total-Count", strconv.FormatInt(result.TotalCount, 10))
+
+		// Enviar solo los items en el wrapper de éxito
+		response := util.NewSuccessResponse(result.Items, http.StatusOK)
+		c.JSON(response.StatusCode, response)
+	}
+}
+
+// @Summary Get all users
+// @Description Gets all the users
+// @Tags users
+// @Success 200 {array} models.UsersResp "OK"
+// @Failure 400 {object} object
+// @Failure 401 {object} object
+// @Failure 408 {object} object
+// @Failure 500 {object} object
+// @Security Bearer
+// @Router /api/v2027_01/users [get]
+func getInfUsers(p ports.UsersService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// El ctx ya tiene timeout + schema
+		ctx := c.Request.Context()
+
+		filter := make(map[string]interface{})
+
+		// Obtener todos los parámetros de consulta
+		queryParams := c.Request.URL.Query()
+
+		// Convertir a un map[string]interface{}
+		for key, values := range queryParams {
+			if len(values) > 1 {
+				// Si hay múltiples valores, los almacenamos como slice
+				filter[key] = values
+			} else {
+				// Si hay un solo valor, lo almacenamos directamente
+				filter[key] = values[0]
+			}
+		}
+
+		result, err := p.GetInforme(ctx, filter)
 		if err != nil {
 			response := util.NewErrorResponse(err, http.StatusInternalServerError)
 			c.JSON(response.StatusCode, response)

@@ -79,3 +79,13 @@ type RolesReport struct {
 func (RolesReport) TableName() string {
 	return "roles" // Nombre de la tabla en la base de datos
 }
+
+type RolesUser struct {
+	ID          int64  `json:"id"`
+	Description string `json:"description"`
+	CompanyId   int8   `json:"company_id"`
+}
+
+func (RolesUser) TableName() string {
+	return "roles" // Nombre de la tabla en la base de datos
+}

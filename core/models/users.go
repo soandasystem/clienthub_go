@@ -119,3 +119,21 @@ type UsersReport struct {
 func (UsersReport) TableName() string {
 	return "users" // Nombre de la tabla en la base de datos
 }
+
+type UsersInforme struct {
+	ID       int64        `json:"id"`
+	FullName string       `json:"full_name"`
+	Email    string       `json:"email"`
+	Zone     string       `json:"zone"`
+	Phone    string       `json:"phone"`
+	Clients  []ClientsInf `json:"clients" gorm:"foreignKey:AssignedSellerID;references:ID"`
+}
+
+func (UsersInforme) TableName() string {
+	return "users" // Nombre de la tabla en la base de datos
+}
+
+type UsersListInforme struct {
+	Items      []UsersInforme `json:"items"`
+	TotalCount int64          `json:"totalCount"`
+}
