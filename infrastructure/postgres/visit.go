@@ -63,12 +63,18 @@ func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interfac
 	//asigna el schma a usar
 	DB := infrastructure.GetDBWithSchema(ctx, s.DB)
 	var registro []models.ListVisit
+	var totalCount int64
 	// Crea una consulta base
 	query := DB.WithContext(ctx).Model(&models.ListVisit{})
 
 	// Aplica filtros si existen
 	for key, value := range filter {
 		query = query.Where(fmt.Sprintf("%s = ?", key), value)
+	}
+
+	//contar los registros
+	if err := query.Count(&totalCount).Error; err != nil {
+		return nil, err
 	}
 
 	// Aplica paginación si 'skip' y 'take' están definidos
@@ -81,14 +87,14 @@ func (s *visitRepository) GetInf(ctx context.Context, filter map[string]interfac
 		return nil, err
 	}
 
-	if len(registro) < 1 {
+	if len(registro) == 0 {
 		return nil, wrappers.NewNonExistentErr(sql.ErrNoRows)
 	}
 
 	// Mapear a la estructura de respuesta
 	response := models.VisitListResponse{
 		Items:      registro,
-		TotalCount: 0,
+		TotalCount: totalCount,
 	}
 
 	// Devolver como slice de interface{} para cumplir con la interfaz
@@ -99,12 +105,18 @@ func (s *visitRepository) Get(ctx context.Context, filter map[string]interface{}
 	//asigna el schma a usar
 	DB := infrastructure.GetDBWithSchema(ctx, s.DB)
 	var registro []models.Visit
+	var totalCount int64
 	// Crea una consulta base
 	query := DB.WithContext(ctx).Model(&models.Visit{})
 
 	// Aplica filtros si existen
 	for key, value := range filter {
 		query = query.Where(fmt.Sprintf("%s = ?", key), value)
+	}
+
+	//contar los registros
+	if err := query.Count(&totalCount).Error; err != nil {
+		return nil, err
 	}
 
 	// Aplica paginación si 'skip' y 'take' están definidos

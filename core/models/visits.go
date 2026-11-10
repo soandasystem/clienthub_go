@@ -349,11 +349,12 @@ func (UpdateProspect) TableName() string {
 }
 
 type ProspectInf struct {
-	ID          int64   `gorm:"primaryKey;autoIncrement" json:"id"`
-	CompanyName string  `gorm:"type:varchar(200);not null" json:"company_name"`
-	ContactName *string `gorm:"type:varchar(150)" json:"contact_name"`
-	Phone       *string `gorm:"type:varchar(40)" json:"phone"`
-	Email       *string `gorm:"type:varchar(150)" json:"email"`
+	ID          int64  `json:"id"`
+	CompanyName string `json:"company_name"`
+	ContactName string `json:"contact_name"`
+	Address     string `json:"address"`
+	Phone       string `json:"phone"`
+	Email       string `json:"email"`
 }
 
 func (ProspectInf) TableName() string {
